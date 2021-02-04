@@ -1,0 +1,36 @@
+{% extends "admin_base.njk" %}
+
+{% block titulo %}Productos | Listado{% endblock %}
+
+{% block contenido %}
+    <table width="100%">
+        <br>
+        {% for producto in productos %}
+            <li>
+                {{producto.nombre}}
+            </li>
+            <a class="btn btn-success" href="/producto/{{ producto._id }}">Ver ficha</a>
+            <a class="btn btn-primary" href="/admin/productos/editar/{{ producto._id }}">Editar</a>
+            <form style="display:inline" action="/admin/productos/{{ producto._id }}" method="post">
+                <input type="hidden" name="_method" value="delete"/>
+                <button type="submit" class="btn btn-danger">Borrar</button>
+            </form>
+        {% endfor %}
+    </table>
+
+    {# <table width="100%">
+        {% for libro in libros %}
+            <tr>
+                {% if loop.index % 2 == 0 %}
+                    <td class="par">{{ libro.titulo }}</td>
+                {% else %}
+                    <td class="impar">{{ libro.titulo }}</td>
+                {% endif %}
+                <td><a class="btn btn-success" href="/libros/{{ libro.id }}">Ver ficha</a></td>
+            </tr>
+        {% else %}
+            <tr><td>No hay libros que mostrar.</td></tr>
+        {% endfor %}
+    </table> #}
+
+{% endblock %}

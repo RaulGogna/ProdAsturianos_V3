@@ -1,0 +1,27 @@
+{% extends "publico_base.njk" %}
+
+{% block titulo %}Productos | Listado{% endblock %}
+
+{% block contenido %}
+
+    <form action="/buscar" method="POST">
+        <input type="text" class="form-control col-4" name="busqueda" id="busqueda" placeholder="Buscador de productos ...">
+        <input type="submit" class="btn btn-dark" value="Buscar">
+    </form>
+
+    <div>
+        <br>
+        {% for producto in productos %}
+            <ul>
+                <li>
+                    <u>
+                        <a href="/producto/{{ producto.id }}">{{producto.nombre}}</a>
+                    </u>
+                </li>
+            </ul>
+        {% else %}
+            {{error}}
+        {% endfor %}
+    </div>
+
+{% endblock %}

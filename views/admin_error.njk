@@ -1,0 +1,12 @@
+{% extends "admin_base.njk" %}
+
+{% block titulo %}Productos | Error{% endblock %}
+
+{% block contenido %}
+    <h1>Error</h1>
+
+    <div class="alert alert-danger">
+        Error en la aplicación | {{error}}
+    </div>
+
+{% endblock %}

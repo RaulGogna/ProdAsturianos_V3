@@ -1,0 +1,54 @@
+{% extends "admin_base.njk" %}
+
+{% block nombre %}Productos | Nuevo{% endblock %}
+
+{% block contenido %}
+
+    {%if producto.id %}
+        <h1>Editar este producto</h1>
+        <form action="/admin/productos/:id" method="post" enctype="multipart/form-data">
+    {% else %}
+        <h1>Inserción de nuevo producto</h1>
+        <form action="/admin/productos" method="post" enctype="multipart/form-data">
+    {% endif %}
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" class="form-control" name="nombre" value="{{producto.nombre}}" placeholder="Nombre del producto..."/>
+            </div>
+            <div class="form-group">
+                <label for="descripcion">Descripción:</label>
+                <input type="text" class="form-control" name="descripcion" value="{{producto.descripcion}}" placeholder="Descripcion del producto..."/>
+            </div>
+            <div class="form-group">
+                <label for="precio">Precio:</label>
+                <input type="text" class="form-control" name="precio" value="{{producto.precio}}" placeholder="Precio del producto..."/>
+            </div>
+            <div class="form-group">
+                <label for="imagen">Imagen:</label>
+                <input type="file" class="form-control" name="imagen" value="{{producto.imagen.src}}"/>
+            </div>
+            {%if producto.id %}
+                <p>
+                    <strong> Comentarios </strong>
+                </p>
+                <div>
+                    {%for comentario in producto.comentarios %}
+                        <strong>{{comentario.nombreUsuario}}:</strong>
+                        <u>{{comentario.comentario}}</u>
+                        <form style="display:inline" action="/admin/comentarios/{{ producto._id }}/{{comentario._id}}" method="post">
+                            <input type="hidden" name="_method" value="delete"/>
+                            <button type="submit" class="btn btn-danger">Borrar</button>
+                        </form>
+                        <br>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="form-group">
+                    <label for="comentario">Comentario:</label>
+                    <input type="text" class="form-control" name="comentario" placeholder="Comentario del producto..."/>
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary">Enviar</button>
+        </form>
+{% endblock %}

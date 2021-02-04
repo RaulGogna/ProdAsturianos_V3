@@ -1,0 +1,41 @@
+{% extends "publico_base.njk" %}
+
+{% block titulo %}Productos | Detalle Producto{% endblock %}
+
+{% block contenido %}
+
+    <div class="row">
+        <div class="col-4">
+            <img style="width:370px; height:200px;" src="/public/uploads/{{producto.imagen}}"/>
+        </div>
+
+        <div class="col-8">
+            <p>
+                <strong>{{ producto.nombre }}</strong>
+            </p>
+            <p>{{ producto.precio.toFixed(2)}} €</p>
+            <p>{{ producto.descripcion }}</p>
+        </div>
+    </div>
+
+    <br>
+    <div>
+        <p>
+            <strong> Comentarios </strong>
+        </p>
+        <div>
+            {%for comentario in producto.comentarios %}
+                <strong>{{comentario.nombreUsuario}}:</strong>
+                {{comentario.comentario}}
+                <br>
+            {% endfor %}
+        </div>
+
+        <form type="text" action="/admin/comentarios/{{producto.id}}" method="post">
+            <label>Comentario</label>
+            <input type="text" name="comentario" placeholder="escribe un comentario ..."/>
+            <button type="submit" class="btn btn-dark">Enviar</button>
+        </form>
+    </div>
+
+{% endblock %}
