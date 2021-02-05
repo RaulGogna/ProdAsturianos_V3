@@ -40,7 +40,7 @@ router.get('/productos/editar/:id', autenticacion, (req, res) => {
 });
 
 //Servicio de inserción de producto
-router.post('/productos', upload.single('imagen'), (req, res) => {
+router.post('/productos', autenticacion, upload.single('imagen'), (req, res) => {
     let comentario = {
         nombreUsuario: req.session.usuario,
         comentario: req.body.comentario,
@@ -55,22 +55,32 @@ router.post('/productos', upload.single('imagen'), (req, res) => {
 
     nuevoProducto.save().then(resultado => {
         if (resultado)
-            res.redirect('/');
+            res.redirect(req.baseUrl);
     }).catch(error => {
         res.render('admin_error', { error: error });
     });
 });
 
 //Servicio de modificación de producto
-router.post('/productos/:id', upload.single('imagen'), (req, res) => {
-    Producto.findByIdAndUpdate(req.params.id, {
+router.post('/productos/:id', autenticacion, upload.single('imagen'), (req, res) => {
+    let producto = {
         nombre: req.body.nombre,
         precio: req.body.precio,
-        descripcion: req.body.descripcion,
-        imagen: req.file.filename
+        descripcion: req.body.descripcion
+    }
+    if (req.file !== undefined) {
+        producto = {
+            nombre: req.body.nombre,
+            precio: req.body.precio,
+            descripcion: req.body.descripcion,
+            imagen: req.file.filename
+        }
+    }
+    Producto.findByIdAndUpdate(req.params.id, {
+        $set: producto
     }, { new: true }).then(resultado => {
         if (resultado)
-            res.redirect('/');
+            res.redirect(req.baseUrl);
     }).catch(error => {
         res.render('admin_error', { error: error });
     });
@@ -83,9 +93,9 @@ router.post('/comentarios/:idProducto', autenticacion, (req, res) => {
         comentario: req.body.comentario
     };
 
-    Producto.findByIdAndUpdate(req.params.idProducto, { $addToSet: {comentarios:  comentario } }, { new: true }).then(resultado => {
+    Producto.findByIdAndUpdate(req.params.idProducto, { $addToSet: { comentarios: comentario } }, { new: true }).then(resultado => {
         if (resultado)
-            res.redirect('/');
+            res.redirect(req.baseUrl);
     }).catch(error => {
         res.render('admin_error', { error: '' })
     });
@@ -96,7 +106,7 @@ router.delete('/productos/:id', (req, res) => {
     Producto.findByIdAndRemove(req.params.id)
         .then(resultado => {
             if (resultado)
-                res.redirect('/');
+                res.redirect(req.baseUrl);
         }).catch(error => {
             res.render('admin_error');
         });
@@ -110,7 +120,7 @@ router.delete('/comentarios/:idProducto/:idComentario', (req, res) => {
     Producto.findOneAndUpdate({ _id: id_producto }, { $pull: { comentarios: { _id: id_comentario } } }, { new: true })
         .then(resultado => {
             if (resultado)
-                res.redirect('/');
+                res.redirect(req.baseUrl);
         }).catch(error => {
             res.render('admin_error');
         });
