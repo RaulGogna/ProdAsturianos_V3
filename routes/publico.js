@@ -17,7 +17,6 @@ router.post('/buscar', (req, res) => {
         if (resultado) {
             arrayProductos = resultado.filter(p => (p.nombre.toLowerCase()).includes(variableSearch.toLowerCase()));
             if (arrayProductos.length > 0){
-                // console.log(arrayProductos);
                 res.render('publico_index', { productos: arrayProductos });
             }
             else if(variableSearch == undefined  ){
@@ -26,6 +25,9 @@ router.post('/buscar', (req, res) => {
             else if(arrayProductos.length == 0){
                 res.render('publico_index', { error: '¡No hay productos con ese nombre!'});
             }
+        }
+        else{
+            res.render('publico_error', {error: 'No hay productos encontrados'});
         }
     }).catch((error) => {
         res.render('publico_error', { error: error });

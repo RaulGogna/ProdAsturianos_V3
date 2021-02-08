@@ -18,7 +18,11 @@ let upload = multer({ storage: storage });
 //Servicio de listado general
 router.get('/', autenticacion, (req, res) => {
     Producto.find().then(resultado => {
-        res.render('admin_productos', { productos: resultado });
+        if(resultado.length > 0)
+            res.render('admin_productos', { productos: resultado });
+        else{
+            res.render('admin_error', {error: 'No hay productos'});
+        }
     }).catch(error => {
         res.render('admin_error');
     });
@@ -87,22 +91,24 @@ router.post('/productos/:id', autenticacion, upload.single('imagen'), (req, res)
 });
 
 //Servicio de modificacion de comentarios
-router.post('/comentarios/:idProducto', autenticacion, (req, res) => {
-    let comentario = {
-        nombreUsuario: req.session.usuario,
+router.post('/comentarios/:idProducto', (req, res) => {
+    comentario = {
+        nombreUsuario: req.session.usuario == undefined ? 'Anónimo' : req.session.usuario,
         comentario: req.body.comentario
     };
-
     Producto.findByIdAndUpdate(req.params.idProducto, { $addToSet: { comentarios: comentario } }, { new: true }).then(resultado => {
-        if (resultado)
+        if (resultado && req.session.usuario)
             res.redirect(req.baseUrl);
+        else if(resultado && !req.session.usuario){
+            res.render('publico_index');
+        }
     }).catch(error => {
         res.render('admin_error', { error: '' })
     });
 });
 
 //Servicio de eliminación de producto
-router.delete('/productos/:id', (req, res) => {
+router.delete('/productos/:id', autenticacion, (req, res) => {
     Producto.findByIdAndRemove(req.params.id)
         .then(resultado => {
             if (resultado)
